@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="hello" v-if="transacoes.length">
     <b-table striped hover :items="formattedTransacoes" :per-page="5" :current-page="currentPage"></b-table>
     <b-pagination v-model="currentPage" :total-rows="formattedTransacoes.length" :per-page="5"></b-pagination>
   </div>
@@ -9,7 +9,12 @@
 export default {
   name: "FormattedTable",
   props: {
-    transacoes: Array
+    transacoes: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
   },
   data() {
     return {
@@ -19,11 +24,16 @@ export default {
   computed: {
     formattedTransacoes() {
       return this.transacoes.map(transacao => {
-        const { dayOfMonth, month, year, hourOfDay, minute, second } = transacao.data;
+        const {
+          dayOfMonth,
+          month,
+          year
+        } = transacao.data;
         return {
-        ...transacao, data: `${dayOfMonth}/${month}/${year} - ${hourOfDay}:${minute}:${second}`,
-        tipos: transacao.tipos.join(' - ')
-      }});
+          ...transacao,
+          data: `${dayOfMonth}/${month}/${year}`,
+        };
+      });
     }
   }
 };

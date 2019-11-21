@@ -52,8 +52,11 @@
         <h5>Calcular o saldo mínimo atingido em determinado ano e mês</h5>
         {{ saldoMin }}
       </b-col>
+      <b-col>
+        <h5>Retornar o fluxo de caixa de determinado mês/ano. O fluxo de caixa nada mais é do que uma lista contendo pares (dia,saldoFinalDoDia).</h5>
+        <formatted-table :transacoes="fluxo" />
+      </b-col>
     </b-row>
-    <h5>Retornar o fluxo de caixa de determinado mês/ano. O fluxo de caixa nada mais é do que uma lista contendo pares (dia,saldoFinalDoDia).</h5>
   </b-container>
 </template>
 
@@ -142,30 +145,34 @@ export default {
       );
     },
     saldoMax() {
-      return this.isYearAndMonthSelected
-        ? [this.saldoInicial]
-            .concat(
-              this.transacoesValidasFilteredByYearAndMonth.map(
-                transacao => transacao.valor
-              )
-            )
-            .reduce((max, atual) =>
-              max + atual > max ? max + atual: max
-            )
-        : 0;
+      return this.transacoesValidasFilteredByYearAndMonth
+        .map(transacao => transacao.valor)
+        .reduce(
+          (max, atual) => (max + atual > max ? max + atual : max),
+          this.saldoInicial
+        );
     },
     saldoMin() {
-      return this.isYearAndMonthSelected
-        ? [this.saldoInicial]
-            .concat(
-              this.transacoesValidasFilteredByYearAndMonth.map(
-                transacao => transacao.valor
-              )
-            )
-            .reduce((min, atual) =>
-              min + atual < min ? min + atual: min
-            )
-        : 0;
+      return this.transacoesValidasFilteredByYearAndMonth
+        .map(transacao => transacao.valor)
+        .reduce(
+          (min, atual) => (min + atual < min ? min + atual : min),
+          this.saldoInicial
+        );
+    },
+    fluxo() {
+      return Object.entries(
+        this.groupBy(
+          this.transacoesValidasFilteredByYearAndMonth.map(d => ({
+            ...d,
+            dia: d.data.dayOfMonth
+          })),
+          "dia"
+        )
+      ).map(entry => ({
+        data: entry[1][0].data,
+        valor: entry[1].map(e => e.valor).reduce((sum, atual) => sum + atual, 0)
+      }));
     }
   },
   methods: {
@@ -186,6 +193,15 @@ export default {
           ).length === 0
       );
     },
+    groupBy(items, key) {
+      return items.reduce(
+        (result, item) => ({
+          ...result,
+          [item[key]]: [...(result[item[key]] || []), item]
+        }),
+        {}
+      );
+    },
     calculaReceitas(transacoes) {
       const valores = transacoes.filter(x => x.valor >= 0).map(x => x.valor);
       let result = 0;
@@ -198,6 +214,7 @@ export default {
       const valores = transacoes.filter(x => x.valor < 0).map(x => x.valor);
       let result = 0;
       if (valores.length)
+        // REDUCE não pode ser usado com Array vazio
         result = valores.reduce((a, b) => a + b) / transacoes.length;
       return result;
     }
