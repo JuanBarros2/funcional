@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module (
+module Types (
     GregorianCalendar (..),
     Transaction (..)
 ) where
@@ -12,14 +12,14 @@ data GregorianCalendar = GregorianCalendar {
     year :: Int,
     month :: Int,
     dayOfMonth :: Int
-} deriving(Eq, Show)
+} deriving(Eq, Show, Generic)
 
 data Transaction = Transaction {
     date :: GregorianCalendar,
     identifierText :: String,
     value :: Double,
     description :: String,
-    docNumber :: Int,
+    docNumber :: String,
     types :: [String]
 } deriving(Eq, Show, Generic)
 
