@@ -1,5 +1,6 @@
 import Types
 import ParserJSON
+import Data.List (groupBy)
 
 -- Filtra transações pelo ano
 filterByYear :: Int -> [Transaction] -> [Transaction]
@@ -127,3 +128,75 @@ getBalanceDay :: Int -> Int -> Int -> IO Double
 getBalanceDay y m d = do
     transactions <- (getTransactionsByYearMonthDay y m d)
     return (sumValues transactions)
+
+-- Retorna o valor da transação
+getValue :: Transaction -> IO Double
+getValue (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = (getBalanceDay y m d)
+
+-- Retorna o maior elemento
+getMax :: Double -> Double -> Double
+getMax max value
+    | max > value = max
+    | otherwise = value
+
+-- Retorna o menor elemento
+getMin :: Double -> Double -> Double
+getMin min value
+    | min < value = min
+    | otherwise = value
+
+-- Retorna o maior saldo da lista
+maxBalance :: Double -> [Transaction] -> IO Double
+maxBalance value [] = do
+    return value
+maxBalance value (x:xs) = do
+    valueTransaction <- (getValue x)
+    (maxBalance (getMax value valueTransaction) xs)
+
+-- Retorna o menor saldo da lista
+minBalance :: Double -> [Transaction] -> IO Double
+minBalance value [] = do
+    return value
+minBalance value (x:xs) = do
+    valueTransaction <- (getValue x)
+    (minBalance (getMin value valueTransaction) xs)
+
+-- Retorna o maior saldo do mês de um determinado ano
+maxBalanceYearMonth :: Int -> Int -> IO Double
+maxBalanceYearMonth y m = do
+    transactions <- (getTransactionsByYearMonth y m)
+    firstTransaction <- (getValue (head transactions))
+    (maxBalance firstTransaction transactions)
+
+-- Retorna o menor saldo do mês de um determinado ano
+minBalanceYearMonth :: Int -> Int -> IO Double
+minBalanceYearMonth y m = do
+    transactions <- (getTransactionsByYearMonth y m)
+    firstTransaction <- (getValue (head transactions))
+    (minBalance firstTransaction transactions)
+
+exist :: (Int, Double) -> [(Int, Double)] -> Bool
+exist (d, balance) [] = False
+exist (d, balance) ((x, y):xs)
+    | d == x = True
+    | otherwise = (exist (d, balance) xs)
+
+noRepeat :: [(Int, Double)] -> [(Int, Double)]
+noRepeat [] = []
+noRepeat (x:xs)
+    | (exist x xs) = (noRepeat xs)
+    | otherwise = x:(noRepeat xs)
+
+_getCashFlow :: [Transaction] -> IO [(Int, Double)]
+_getCashFlow [] = do
+    return []
+_getCashFlow ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs) = do
+    balance <- (getBalanceDay y m d)
+    cashFlow <- (_getCashFlow xs)
+    return ((d, balance):cashFlow)
+
+getCashFlow :: Int -> Int -> IO [(Int, Double)]
+getCashFlow y m = do
+    transactions <- (getTransactionsByYearMonth y m)
+    cashFlow <- (_getCashFlow transactions)
+    return (noRepeat cashFlow)
