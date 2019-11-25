@@ -24,21 +24,21 @@ filterByDay day ((Transaction (GregorianCalendar y m d) idText value desc docNum
     | otherwise = (filterByDay day xs)
 
 -- Retorna as transações do ano escolhido
-getTransactionsByYear :: Int -> IO [Transaction]
-getTransactionsByYear y = do
+transactionsByYear :: Int -> IO [Transaction]
+transactionsByYear y = do
     transactions <- getTransactions
     return (filterByYear y transactions)
 
 -- Retorna as transações do ano e mês escolhidos
-getTransactionsByYearMonth :: Int -> Int -> IO [Transaction]
-getTransactionsByYearMonth y m = do
-    transactions <- getTransactionsByYear y
+transactionsByYearMonth :: Int -> Int -> IO [Transaction]
+transactionsByYearMonth y m = do
+    transactions <- transactionsByYear y
     return (filterByMonth m transactions)
 
 -- Retorna as transações do ano, mês e dia escolhidos
-getTransactionsByYearMonthDay :: Int -> Int -> Int -> IO [Transaction]
-getTransactionsByYearMonthDay y m d = do
-    transactions <- getTransactionsByYearMonth y m
+transactionsByYearMonthDay :: Int -> Int -> Int -> IO [Transaction]
+transactionsByYearMonthDay y m d = do
+    transactions <- transactionsByYearMonth y m
     return (filterByDay d transactions)
 
 -- Verifica se a transação é uma receita ou despesa
@@ -51,16 +51,16 @@ isIncome :: Transaction -> Bool
 isIncome (Transaction date idText value desc docNumber types) = value >= 0
 
 -- Retorna as transações que são receitas
-getIncome :: [Transaction] -> [Transaction]
-getIncome [] = []
-getIncome (x:xs) | ((isIncomeOrExpense x) && (isIncome x)) = x:(getIncome xs)
-                 | otherwise = (getIncome xs)
+incomes :: [Transaction] -> [Transaction]
+incomes [] = []
+incomes (x:xs) | ((isIncomeOrExpense x) && (isIncome x)) = x:(incomes xs)
+                 | otherwise = (incomes xs)
 
 -- Retorna as transações que são despesas
-getExpense :: [Transaction] -> [Transaction]
-getExpense [] = []
-getExpense (x:xs) | ((isIncomeOrExpense x) && (not (isIncome x))) = x:(getExpense xs)
-                 | otherwise = (getExpense xs)
+expenses :: [Transaction] -> [Transaction]
+expenses [] = []
+expenses (x:xs) | ((isIncomeOrExpense x) && (not (isIncome x))) = x:(expenses xs)
+                 | otherwise = (expenses xs)
 
 -- Soma o valor das transações da lista
 sumValues :: [Transaction] -> Double
@@ -68,52 +68,52 @@ sumValues [] = 0
 sumValues ((Transaction date idText value desc docNumber types):xs) = value + (sumValues xs)
 
 -- Retorna o total de receitas do ano
-getIncomeYear :: Int -> IO Double
-getIncomeYear y = do
-    transactionsByYear <- (getTransactionsByYear y)
-    return (sumValues (getIncome transactionsByYear))
+incomesYear :: Int -> IO Double
+incomesYear y = do
+    transactionsByYear <- (transactionsByYear y)
+    return (sumValues (incomes transactionsByYear))
 
 -- Retorna o total de receitas de um mês de um determinado ano
-getIncomeYearMonth :: Int -> Int -> IO Double
-getIncomeYearMonth y m = do
-    transactionsByYearMonth <- (getTransactionsByYearMonth y m)
-    return (sumValues (getIncome transactionsByYearMonth))
+incomesYearMonth :: Int -> Int -> IO Double
+incomesYearMonth y m = do
+    transactionsByYearMonth <- (transactionsByYearMonth y m)
+    return (sumValues (incomes transactionsByYearMonth))
 
 -- Retorna o total de despesas de um ano
-getExpenseYear :: Int -> IO Double
-getExpenseYear y = do
-    transactionsByYear <- (getTransactionsByYear y)
-    return (sumValues (getExpense transactionsByYear))
+expensesYear :: Int -> IO Double
+expensesYear y = do
+    transactionsByYear <- (transactionsByYear y)
+    return (sumValues (expenses transactionsByYear))
 
 -- Retorna o total de despesas de um mês de um determinado ano
-getExpenseYearMonth :: Int -> Int -> IO Double
-getExpenseYearMonth y m = do
-    transactionsByYearMonth <- (getTransactionsByYearMonth y m)
-    return (sumValues (getExpense transactionsByYearMonth))
+expensesYearMonth :: Int -> Int -> IO Double
+expensesYearMonth y m = do
+    transactionsByYearMonth <- (transactionsByYearMonth y m)
+    return (sumValues (expenses transactionsByYearMonth))
 
 -- Retorna a sobra de um mês de um determinado ano
-getRemainderYearMonth :: Int -> Int -> IO Double
-getRemainderYearMonth y m = do
-    income <- (getIncomeYearMonth y m)
-    expense <- (getExpenseYearMonth y m)
+remainderYearMonth :: Int -> Int -> IO Double
+remainderYearMonth y m = do
+    income <- (incomesYearMonth y m)
+    expense <- (expensesYearMonth y m)
     return (income + expense)
 
 -- Retorna o saldo final de um mês de um determinado ano
-getBalanceYearMonth :: Int -> Int -> IO Double
-getBalanceYearMonth y m = do
+balanceYearMonth :: Int -> Int -> IO Double
+balanceYearMonth y m = do
         transactions <- getTransactions
         return (sumValues transactions)
 
 -- Retorna a média das receitas de um determinado ano
 meanIncomeYear :: Int -> IO Double
 meanIncomeYear y = do
-    income <- (getIncomeYear y)
+    income <- (incomesYear y)
     return (income / 12)
 
 -- Retorna a média das despesas de um determinado ano
 meanExpenseYear :: Int -> IO Double
 meanExpenseYear y = do
-    expense <- (getExpenseYear y)
+    expense <- (expensesYear y)
     return (expense / 12)
 
 -- Retorna a média das sobras de um determinado ano
@@ -124,24 +124,24 @@ meanRemainderYear y = do
     return (meanIncome + meanExpense)
 
 -- Retorna o saldo de um dia, de um determinado mês e ano
-getBalanceDay :: Int -> Int -> Int -> IO Double
-getBalanceDay y m d = do
-    transactions <- (getTransactionsByYearMonthDay y m d)
+balanceDay :: Int -> Int -> Int -> IO Double
+balanceDay y m d = do
+    transactions <- (transactionsByYearMonthDay y m d)
     return (sumValues transactions)
 
 -- Retorna o valor da transação
 getValue :: Transaction -> IO Double
-getValue (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = (getBalanceDay y m d)
+getValue (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = (balanceDay y m d)
 
 -- Retorna o maior elemento
-getMax :: Double -> Double -> Double
-getMax max value
+maxValue :: Double -> Double -> Double
+maxValue max value
     | max > value = max
     | otherwise = value
 
 -- Retorna o menor elemento
-getMin :: Double -> Double -> Double
-getMin min value
+minValue :: Double -> Double -> Double
+minValue min value
     | min < value = min
     | otherwise = value
 
@@ -151,7 +151,7 @@ maxBalance value [] = do
     return value
 maxBalance value (x:xs) = do
     valueTransaction <- (getValue x)
-    (maxBalance (getMax value valueTransaction) xs)
+    (maxBalance (maxValue value valueTransaction) xs)
 
 -- Retorna o menor saldo da lista
 minBalance :: Double -> [Transaction] -> IO Double
@@ -159,19 +159,19 @@ minBalance value [] = do
     return value
 minBalance value (x:xs) = do
     valueTransaction <- (getValue x)
-    (minBalance (getMin value valueTransaction) xs)
+    (minBalance (minValue value valueTransaction) xs)
 
 -- Retorna o maior saldo do mês de um determinado ano
 maxBalanceYearMonth :: Int -> Int -> IO Double
 maxBalanceYearMonth y m = do
-    transactions <- (getTransactionsByYearMonth y m)
+    transactions <- (transactionsByYearMonth y m)
     firstTransaction <- (getValue (head transactions))
     (maxBalance firstTransaction transactions)
 
 -- Retorna o menor saldo do mês de um determinado ano
 minBalanceYearMonth :: Int -> Int -> IO Double
 minBalanceYearMonth y m = do
-    transactions <- (getTransactionsByYearMonth y m)
+    transactions <- (transactionsByYearMonth y m)
     firstTransaction <- (getValue (head transactions))
     (minBalance firstTransaction transactions)
 
@@ -190,17 +190,17 @@ noRepeat (x:xs)
     | otherwise = x:(noRepeat xs)
 
 -- Adiciona os saldos diários ao fluxo de caixa
-_getCashFlow :: [Transaction] -> IO [(Int, Double)]
-_getCashFlow [] = do
+_cashFlow :: [Transaction] -> IO [(Int, Double)]
+_cashFlow [] = do
     return []
-_getCashFlow ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs) = do
-    balance <- (getBalanceDay y m d)
-    cashFlow <- (_getCashFlow xs)
+_cashFlow ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs) = do
+    balance <- (balanceDay y m d)
+    cashFlow <- (_cashFlow xs)
     return ((d, balance):cashFlow)
 
 -- Retorna o fluxo diário do mês de um determinado ano
-getCashFlow :: Int -> Int -> IO [(Int, Double)]
-getCashFlow y m = do
-    transactions <- (getTransactionsByYearMonth y m)
-    cashFlow <- (_getCashFlow transactions)
+cashFlow :: Int -> Int -> IO [(Int, Double)]
+cashFlow y m = do
+    transactions <- (transactionsByYearMonth y m)
+    cashFlow <- (_cashFlow transactions)
     return (noRepeat cashFlow)
