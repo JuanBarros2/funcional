@@ -44,7 +44,7 @@ getTransactionsByYearMonthDay y m d = do
 -- Verifica se a transação é uma receita ou despesa
 isIncomeOrExpense :: Transaction -> Bool
 isIncomeOrExpense (Transaction date idText value desc docNumber types) =
-    not (elem "SALDO_CORRENTE" types || elem "APLICACAO" types || elem "value_APLICACAO" types)
+    not (elem SALDO_CORRENTE types || elem APLICACAO types || elem VALOR_APLICACAO types)
 
 -- Verifica se a transação é uma receita
 isIncome :: Transaction -> Bool
@@ -175,18 +175,21 @@ minBalanceYearMonth y m = do
     firstTransaction <- (getValue (head transactions))
     (minBalance firstTransaction transactions)
 
+-- Verifica se elemento existe na lista 
 exist :: (Int, Double) -> [(Int, Double)] -> Bool
-exist (d, balance) [] = False
-exist (d, balance) ((x, y):xs)
-    | d == x = True
-    | otherwise = (exist (d, balance) xs)
+exist balance [] = False
+exist balance (x:xs)
+    | balance == x = True
+    | otherwise = (exist balance xs)
 
+-- Retira da lista elementos repetidos
 noRepeat :: [(Int, Double)] -> [(Int, Double)]
 noRepeat [] = []
 noRepeat (x:xs)
     | (exist x xs) = (noRepeat xs)
     | otherwise = x:(noRepeat xs)
 
+-- Adiciona os saldos diários ao fluxo de caixa
 _getCashFlow :: [Transaction] -> IO [(Int, Double)]
 _getCashFlow [] = do
     return []
@@ -195,6 +198,7 @@ _getCashFlow ((Transaction (GregorianCalendar y m d) idText value desc docNumber
     cashFlow <- (_getCashFlow xs)
     return ((d, balance):cashFlow)
 
+-- Retorna o fluxo diário do mês de um determinado ano
 getCashFlow :: Int -> Int -> IO [(Int, Double)]
 getCashFlow y m = do
     transactions <- (getTransactionsByYearMonth y m)
