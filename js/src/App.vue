@@ -178,18 +178,24 @@ export default {
       );
     },
     fluxo() {
-      return Object.entries(
-        this.groupBy(
-          this.transacoesValidasFilteredByYearAndMonth.map(d => ({
-            ...d,
-            dia: d.data.dayOfMonth
-          })),
-          "dia"
-        )
-      ).map(entry => ({
-        data: entry[1][0].data,
-        valor: entry[1].map(e => e.valor).reduce((sum, atual) => sum + atual, 0)
+      return this.dayOfSelectedMonth.map(dia => ({
+        dia,
+        saldo: this.transacoesValidasFilteredByYearAndMonth
+          .filter(transacao => transacao.data.dayOfMonth <= dia)
+          .reduce(
+            (total, transacao) => total + transacao.valor,
+            this.saldoInicial
+          )
       }));
+    },
+    dayOfSelectedMonth() {
+      return [
+        ...new Set(
+          this.transacoesValidasFilteredByYearAndMonth.map(
+            transacao => transacao.data.dayOfMonth
+          )
+        )
+      ];
     }
   },
   methods: {
@@ -208,15 +214,6 @@ export default {
               tipo === "SALDO_CORRENTE" ||
               tipo === "VALOR_APLICACAO"
           ).length === 0
-      );
-    },
-    groupBy(items, key) {
-      return items.reduce(
-        (result, item) => ({
-          ...result,
-          [item[key]]: [...(result[item[key]] || []), item]
-        }),
-        {}
       );
     },
     calculaSomaTransacoes(transacoes) {

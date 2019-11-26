@@ -1,7 +1,17 @@
 <template>
   <div class="hello" v-if="transacoes.length">
-    <b-table striped hover :items="formattedTransacoes" :per-page="pagesCount" :current-page="currentPage"></b-table>
-    <b-pagination v-model="currentPage" :total-rows="formattedTransacoes.length" :per-page="pagesCount"></b-pagination>
+    <b-table
+      striped
+      hover
+      :items="formattedTransacoes"
+      :per-page="pagesCount"
+      :current-page="currentPage"
+    ></b-table>
+    <b-pagination
+      v-model="currentPage"
+      :total-rows="formattedTransacoes.length"
+      :per-page="pagesCount"
+    ></b-pagination>
   </div>
 </template>
 
@@ -12,7 +22,7 @@ export default {
     transacoes: {
       type: Array,
       default() {
-        return []
+        return [];
       }
     },
     pagesCount: {
@@ -28,15 +38,15 @@ export default {
   computed: {
     formattedTransacoes() {
       return this.transacoes.map(transacao => {
-        const {
-          dayOfMonth,
-          month,
-          year
-        } = transacao.data;
-        return {
-          ...transacao,
-          data: `${dayOfMonth}/${month}/${year}`,
-        };
+        if ("data" in transacao) {
+          const { dayOfMonth, month, year } = transacao.data;
+          return {
+            ...transacao,
+            data: `${dayOfMonth}/${month}/${year}`
+          };
+        } else {
+          return transacao;
+        }
       });
     }
   }
