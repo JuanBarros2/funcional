@@ -1,26 +1,27 @@
 <template>
   <b-container>
-    <b-row>
-      <formatted-table :transacoes="transacoes" />
-    </b-row>
+    <formatted-table :transacoes="transacoes" />
+
     <b-row>
       <h2>Filtragens por ano</h2>
       <b-form-select v-model="selectedYear" :options="years"></b-form-select>
+    </b-row>
+    <b-row>
       <b-col>
         <h5>Filtrar transações por ano.</h5>
         <formatted-table :transacoes="transacoesValidasFilteredByYear" />
       </b-col>
       <b-col>
         <h5>Calcular a média das receitas em determinado ano</h5>
-        {{ receitasByYear }}
+        {{ mediaReceitasByYear }}
       </b-col>
       <b-col>
         <h5>Calcular a média das sobras em determinado ano</h5>
-        {{ receitasByYear + despesasByYear }}
+        {{ mediaReceitasByYear + mediaDespesasByYear }}
       </b-col>
       <b-col>
         <h5>Calcular a média das despesas em determinado ano</h5>
-        {{ despesasByYear }}
+        {{ mediaDespesasByYear }}
       </b-col>
     </b-row>
 
@@ -29,12 +30,16 @@
       <b-form-select v-model="selectedYearAndMonth.year" :options="years"></b-form-select>
       <b-form-select v-model="selectedYearAndMonth.month" :options="months"></b-form-select>
       <b-col>
+        <h5>Filtrar transações por ano e mês.</h5>
+        <formatted-table :transacoes="transacoesValidasFilteredByYearAndMonth" />
+      </b-col>
+      <b-col>
         <h5>Calcular o valor das receitas (créditos) em um determinado mês e ano.</h5>
-        {{ despesasByYearAndMonth}}
+        {{ receitasByYearAndMonth }}
       </b-col>
       <b-col>
         <h5>Calcular o valor das despesas (débitos) em um determinado mês e ano</h5>
-        {{ receitasByYearAndMonth }}
+        {{ despesasByYearAndMonth }}
       </b-col>
       <b-col>
         <h5>Calcular a sobra (receitas - despesas) de determinado mês e ano</h5>
@@ -99,11 +104,21 @@ export default {
         this.filterTransacoesByYear(this.transacoes, this.selectedYear)
       );
     },
-    receitasByYear() {
-      return this.calculaDespesas(this.transacoesValidasFilteredByYear);
+    mediaReceitasByYear() {
+      return (
+        this.calculaSomaTransacoes(
+          this.getReceitasTransacoes(this.transacoesValidasFilteredByYear)
+        ) /
+        this.getReceitasTransacoes(this.transacoesValidasFilteredByYear).length
+      );
     },
-    despesasByYear() {
-      return this.calculaDespesas(this.transacoesValidasFilteredByYear);
+    mediaDespesasByYear() {
+      return (
+        this.calculaSomaTransacoes(
+          this.getDespesasTransacoes(this.transacoesValidasFilteredByYear)
+        ) /
+        this.getDespesasTransacoes(this.transacoesValidasFilteredByYear).length
+      );
     },
     transacoesFilteredByYearAndMonth() {
       return this.filterTransacoesByYear(
@@ -118,10 +133,14 @@ export default {
       return this.filterSpecialCases(this.transacoesFilteredByYearAndMonth);
     },
     receitasByYearAndMonth() {
-      return this.calculaReceitas(this.transacoesValidasFilteredByYearAndMonth);
+      return this.calculaSomaTransacoes(
+        this.getReceitasTransacoes(this.transacoesValidasFilteredByYearAndMonth)
+      );
     },
     despesasByYearAndMonth() {
-      return this.calculaDespesas(this.transacoesValidasFilteredByYearAndMonth);
+      return this.calculaSomaTransacoes(
+        this.getDespesasTransacoes(this.transacoesValidasFilteredByYearAndMonth)
+      );
     },
     isYearAndMonthSelected() {
       return (
@@ -140,25 +159,23 @@ export default {
     },
     saldoFinal() {
       return (
-        this.saldoInicial -
+        this.saldoInicial +
         (this.receitasByYearAndMonth + this.despesasByYearAndMonth)
       );
     },
     saldoMax() {
-      return this.transacoesValidasFilteredByYearAndMonth
-        .map(transacao => transacao.valor)
-        .reduce(
-          (max, atual) => (max + atual > max ? max + atual : max),
-          this.saldoInicial
-        );
+      return Math.max(
+        ...this.transacoesValidasFilteredByYearAndMonth
+          .map(transacao => transacao.valor)
+          .map((sum => value => (sum += value))(this.saldoInicial))
+      );
     },
     saldoMin() {
-      return this.transacoesValidasFilteredByYearAndMonth
-        .map(transacao => transacao.valor)
-        .reduce(
-          (min, atual) => (min + atual < min ? min + atual : min),
-          this.saldoInicial
-        );
+      return Math.min(
+        ...this.transacoesValidasFilteredByYearAndMonth
+          .map(transacao => transacao.valor)
+          .map((sum => value => (sum += value))(this.saldoInicial))
+      );
     },
     fluxo() {
       return Object.entries(
@@ -202,21 +219,14 @@ export default {
         {}
       );
     },
-    calculaReceitas(transacoes) {
-      const valores = transacoes.filter(x => x.valor >= 0).map(x => x.valor);
-      let result = 0;
-      if (valores.length)
-        // REDUCE não pode ser usado com Array vazio
-        result = valores.reduce((a, b) => a + b) / this.transacoes.length;
-      return result;
+    calculaSomaTransacoes(transacoes) {
+      return transacoes.map(x => x.valor).reduce((a, b) => a + b, 0);
     },
-    calculaDespesas(transacoes) {
-      const valores = transacoes.filter(x => x.valor < 0).map(x => x.valor);
-      let result = 0;
-      if (valores.length)
-        // REDUCE não pode ser usado com Array vazio
-        result = valores.reduce((a, b) => a + b) / transacoes.length;
-      return result;
+    getReceitasTransacoes(transacoes) {
+      return transacoes.filter(x => x.valor >= 0);
+    },
+    getDespesasTransacoes(transacoes) {
+      return transacoes.filter(x => x.valor < 0);
     }
   }
 };

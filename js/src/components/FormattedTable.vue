@@ -1,7 +1,7 @@
 <template>
   <div class="hello" v-if="transacoes.length">
-    <b-table striped hover :items="formattedTransacoes" :per-page="5" :current-page="currentPage"></b-table>
-    <b-pagination v-model="currentPage" :total-rows="formattedTransacoes.length" :per-page="5"></b-pagination>
+    <b-table striped hover :items="formattedTransacoes" :per-page="pagesCount" :current-page="currentPage"></b-table>
+    <b-pagination v-model="currentPage" :total-rows="formattedTransacoes.length" :per-page="pagesCount"></b-pagination>
   </div>
 </template>
 
@@ -14,6 +14,10 @@ export default {
       default() {
         return []
       }
+    },
+    pagesCount: {
+      type: Number,
+      default: 10
     }
   },
   data() {
