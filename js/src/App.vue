@@ -83,7 +83,7 @@ export default {
     };
   },
   async mounted() {
-    const response = await fetch("https://150.165.15.10:8080/todasTransacoes", {
+    const response = await fetch("http://150.165.15.10:8080/todasTransacoes", {
       method: "POST"
     });
     this.transacoes = await response.json();
