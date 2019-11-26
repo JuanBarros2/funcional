@@ -98,14 +98,14 @@ data Transaction = Transaction {
     value :: Double,
     description :: String,
     docNumber :: String,
-    types :: [TransactionType]
+    types :: [String]
 } deriving(Eq, Show, Generic)
 
 instance FromJSON GregorianCalendar
 instance ToJSON GregorianCalendar
 
-instance FromJSON Transaction
-instance ToJSON Transaction
-
 instance FromJSON TransactionType
 instance ToJSON TransactionType
+
+instance FromJSON Transaction
+instance ToJSON Transaction

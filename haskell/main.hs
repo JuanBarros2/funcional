@@ -1,26 +1,27 @@
 import Types
+import Utils
 import ParserJSON
 import Data.List (groupBy)
 
 -- Filtra transações pelo ano
 filterByYear :: Int -> [Transaction] -> [Transaction]
 filterByYear _ [] = []
-filterByYear year ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs)
-    | year == y = (Transaction (GregorianCalendar y m d) idText value desc docNumber types):(filterByYear year xs)
+filterByYear year (x:xs)
+    | year == (getYear x) = x:(filterByYear year xs)
     | otherwise = (filterByYear year xs)
 
 -- Filtra transações pelo mês
 filterByMonth :: Int -> [Transaction] -> [Transaction]
 filterByMonth _ [] = []
-filterByMonth month ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs)
-    | month == m = (Transaction (GregorianCalendar y m d) idText value desc docNumber types):(filterByMonth month xs)
+filterByMonth month (x:xs)
+    | month == (getMonth x) = x:(filterByMonth month xs)
     | otherwise = (filterByMonth month xs)
 
 -- Filtra transações pelo dia
 filterByDay :: Int -> [Transaction] -> [Transaction]
 filterByDay _ [] = []
-filterByDay day ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs)
-    | day == d = (Transaction (GregorianCalendar y m d) idText value desc docNumber types):(filterByDay day xs)
+filterByDay day (x:xs)
+    | day == (getDay x) = x:(filterByDay day xs)
     | otherwise = (filterByDay day xs)
 
 -- Retorna as transações do ano escolhido
@@ -41,25 +42,16 @@ transactionsByYearMonthDay y m d = do
     transactions <- transactionsByYearMonth y m
     return (filterByDay d transactions)
 
--- Verifica se a transação é uma receita ou despesa
-isIncomeOrExpense :: Transaction -> Bool
-isIncomeOrExpense (Transaction date idText value desc docNumber types) =
-    not (elem SALDO_CORRENTE types || elem APLICACAO types || elem VALOR_APLICACAO types)
-
--- Verifica se a transação é uma receita
-isIncome :: Transaction -> Bool
-isIncome (Transaction date idText value desc docNumber types) = value >= 0
-
 -- Retorna as transações que são receitas
 incomes :: [Transaction] -> [Transaction]
 incomes [] = []
-incomes (x:xs) | ((isIncomeOrExpense x) && (isIncome x)) = x:(incomes xs)
+incomes (x:xs) | ((isIncomeOrExpense x) && (isIncome x)) = x:(incomes xs) -- FILTER
                  | otherwise = (incomes xs)
 
 -- Retorna as transações que são despesas
 expenses :: [Transaction] -> [Transaction]
 expenses [] = []
-expenses (x:xs) | ((isIncomeOrExpense x) && (not (isIncome x))) = x:(expenses xs)
+expenses (x:xs) | ((isIncomeOrExpense x) && (not (isIncome x))) = x:(expenses xs)  -- FILTER
                  | otherwise = (expenses xs)
 
 -- Soma o valor das transações da lista
@@ -73,7 +65,7 @@ incomesYear y = do
     transactionsByYear <- (transactionsByYear y)
     return (sumValues (incomes transactionsByYear))
 
--- Retorna o total de receitas de um mês de um determinado ano
+-- Retorna o total de receitas do mês de um determinado ano
 incomesYearMonth :: Int -> Int -> IO Double
 incomesYearMonth y m = do
     transactionsByYearMonth <- (transactionsByYearMonth y m)
@@ -83,26 +75,26 @@ incomesYearMonth y m = do
 expensesYear :: Int -> IO Double
 expensesYear y = do
     transactionsByYear <- (transactionsByYear y)
-    return (sumValues (expenses transactionsByYear))
+    return ((sumValues (expenses transactionsByYear)) * (-1)) -- VALOR ABSOLUTO
 
--- Retorna o total de despesas de um mês de um determinado ano
+-- Retorna o total de despesas do mês de um determinado ano
 expensesYearMonth :: Int -> Int -> IO Double
 expensesYearMonth y m = do
     transactionsByYearMonth <- (transactionsByYearMonth y m)
-    return (sumValues (expenses transactionsByYearMonth))
+    return ((sumValues (expenses transactionsByYearMonth)) * (-1)) -- VALOR ABSOLUTO
 
--- Retorna a sobra de um mês de um determinado ano
+-- Retorna a sobra do mês de um determinado ano
 remainderYearMonth :: Int -> Int -> IO Double
 remainderYearMonth y m = do
     income <- (incomesYearMonth y m)
     expense <- (expensesYearMonth y m)
-    return (income + expense)
+    return (income - expense) -- SUBTRAÇÃO
 
 -- Retorna o saldo final de um mês de um determinado ano
 balanceYearMonth :: Int -> Int -> IO Double
 balanceYearMonth y m = do
         transactions <- getTransactions
-        return (sumValues transactions)
+        return (sumValues (_getBalance transactions))
 
 -- Retorna a média das receitas de um determinado ano
 meanIncomeYear :: Int -> IO Double
@@ -121,15 +113,16 @@ meanRemainderYear :: Int -> IO Double
 meanRemainderYear y = do
     meanIncome <- (meanIncomeYear y)
     meanExpense <- (meanExpenseYear y)
-    return (meanIncome + meanExpense)
+    return (meanIncome - meanExpense)
 
 -- Retorna o saldo de um dia, de um determinado mês e ano
 balanceDay :: Int -> Int -> Int -> IO Double
 balanceDay y m d = do
     transactions <- (transactionsByYearMonthDay y m d)
-    return (sumValues transactions)
+    return (sumValues (_getBalance transactions))
 
 -- Retorna o valor da transação
+-- MUDAR NOME DESSE MÉTODO
 getValue :: Transaction -> IO Double
 getValue (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = (balanceDay y m d)
 
