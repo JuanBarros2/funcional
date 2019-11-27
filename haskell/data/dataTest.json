@@ -1,0 +1,314 @@
+[
+    {
+        "date": {
+          "year": 2018,
+          "month": 0,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "Saldo Corrente",
+        "value": 43980.15,
+        "description": "Saldo inicial do mes",
+        "docNumber": "00000000",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "SALDO_CORRENTE"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2018,
+          "month": 0,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "RDC - Longo CDI",
+        "value": 2602.34,
+        "description": "value aplicacao no mes",
+        "docNumber": "11111111",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "VALOR_APLICACAO"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2018,
+          "month": 0,
+          "dayOfMonth": 2,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 21
+        },
+        "identifierText": "CHEQUE PAGO CAIXA",
+        "value": -2260.0,
+        "description": "",
+        "docNumber": "002.782",
+        "classified": false,
+        "types": [
+          "OUTROS"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2018,
+          "month": 0,
+          "dayOfMonth": 2,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 21
+        },
+        "identifierText": "CRED LIQ COB",
+        "value": 92.45,
+        "description": "CRED TIT INEXISTENTE NN 4219-8",
+        "docNumber": "42198",
+        "classified": false,
+        "types": [
+          "OUTRAS_RECEITAS"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2018,
+          "month": 2,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "Saldo Corrente",
+        "value": 41504.71,
+        "description": "Saldo inicial do mes",
+        "docNumber": "00000000",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "SALDO_CORRENTE"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2018,
+          "month": 2,
+          "dayOfMonth": 1,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 22
+        },
+        "identifierText": "DEB.PARC.SUBS/INTEG",
+        "value": -50.0,
+        "description": "",
+        "docNumber": "4990",
+        "classified": false,
+        "types": [
+          "OUTROS"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2018,
+          "month": 2,
+          "dayOfMonth": 1,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 22
+        },
+        "identifierText": "CRÉD.LIQ.COBRANÇA",
+        "value": 2635.96,
+        "description": "",
+        "docNumber": "0000031649",
+        "classified": false,
+        "types": [
+          "OUTRAS_RECEITAS"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2018,
+          "month": 2,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "RDC - Longo CDI",
+        "value": 2624.44,
+        "description": "value aplicacao no mes",
+        "docNumber": "11111111",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "VALOR_APLICACAO"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 0,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "Saldo Corrente",
+        "value": 131301.66,
+        "description": "Saldo inicial do mes",
+        "docNumber": "00000000",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "SALDO_CORRENTE"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 0,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "RDC - Longo CDI",
+        "value": 2758.12,
+        "description": "value aplicacao no mes",
+        "docNumber": "11111111",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "VALOR_APLICACAO"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 0,
+          "dayOfMonth": 3,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 21
+        },
+        "identifierText": "CHEQUE PAGO CAIXA",
+        "value": -300.0,
+        "description": "",
+        "docNumber": "003.389",
+        "classified": false,
+        "types": [
+          "OUTROS"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 0,
+          "dayOfMonth": 3,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 21
+        },
+        "identifierText": "CRÉD.LIQ.COBRANÇA",
+        "value": 4407.76,
+        "description": "",
+        "docNumber": "0000035123",
+        "classified": false,
+        "types": [
+          "OUTRAS_RECEITAS"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 3,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "Saldo Corrente",
+        "value": 163797.14,
+        "description": "Saldo inicial do mes",
+        "docNumber": "00000000",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "SALDO_CORRENTE"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 3,
+          "dayOfMonth": 1,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 22
+        },
+        "identifierText": "CH COOP/AG.DEP.CTA",
+        "value": -10000.0,
+        "description": "",
+        "docNumber": "003.539",
+        "classified": false,
+        "types": [
+          "OUTROS"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 3,
+          "dayOfMonth": 1,
+          "hourOfDay": 0,
+          "minute": 0,
+          "second": 0
+        },
+        "identifierText": "RDC - Longo CDI",
+        "value": 5224.7,
+        "description": "value aplicacao no mes",
+        "docNumber": "11111111",
+        "classified": true,
+        "types": [
+          "OUTRAS_RECEITAS",
+          "VALOR_APLICACAO"
+        ],
+        "files": []
+      },
+      {
+        "date": {
+          "year": 2019,
+          "month": 3,
+          "dayOfMonth": 8,
+          "hourOfDay": 8,
+          "minute": 15,
+          "second": 22
+        },
+        "identifierText": "CRÉD.LIQ.COBRANÇA",
+        "value": 479.04,
+        "description": "",
+        "docNumber": "0000068846",
+        "classified": false,
+        "types": [
+          "OUTRAS_RECEITAS"
+        ],
+        "files": []
+      }
+]

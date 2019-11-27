@@ -1,3 +1,25 @@
+module Controller (
+    transactionsByYear,
+    transactionsByYearMonth,
+    incomesYear,
+    incomesYearMonth,
+    expensesYear,
+    expensesYearMonth,
+    remainderYearMonth,
+    balanceYearMonth,
+    meanIncomeYear,
+    meanExpenseYear,
+    meanRemainderYear,
+    _balanceDay,
+    _getValue,
+    maxBalance,
+    minBalance,
+    maxBalanceYearMonth,
+    minBalanceYearMonth,
+    _cashFlow,
+    cashFlow
+) where
+
 import Types
 import Utils
 import ParserJSON
@@ -9,10 +31,6 @@ transactionsByYear t y = filterByYear y t
 -- Retorna as transações do ano e mês escolhidos
 transactionsByYearMonth :: [Transaction] -> Int -> Int -> [Transaction]
 transactionsByYearMonth t y m = (filterByMonth m (transactionsByYear t y))
-
--- Retorna as transações do ano, mês e dia escolhidos
-transactionsByYearMonthDay :: [Transaction] -> Int -> Int -> Int -> [Transaction]
-transactionsByYearMonthDay t y m d = (filterByDay d (transactionsByYearMonth t y m))
 
 -- Retorna o total de receitas do ano
 incomesYear :: [Transaction] -> Int -> Double
@@ -51,35 +69,35 @@ meanRemainderYear :: [Transaction] -> Int -> Double
 meanRemainderYear t y = ((meanIncomeYear t y) - (meanExpenseYear t y))
 
 -- Retorna o saldo de um dia, de um determinado mês e ano
-balanceDay :: [Transaction] -> Int -> Int -> Int -> Double
-balanceDay t y m d = (sumValues (_getBalance (previousTransactions d (transactionsByYearMonth t y m))))
+_balanceDay :: [Transaction] -> Int -> Int -> Int -> Double
+_balanceDay t y m d = (sumValues (_getBalance (previousTransactions d (transactionsByYearMonth t y m))))
 
 -- Retorna o valor da transação
-getValue :: [Transaction] -> Transaction -> Double
-getValue t (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = (balanceDay t y m d)
+_getValue :: [Transaction] -> Transaction -> Double
+_getValue t (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = (_balanceDay t y m d)
 
 -- Retorna o maior saldo da lista
-maxBalance :: [Transaction] -> Double -> [Transaction] -> Double
-maxBalance _ value [] = value
-maxBalance t value (x:xs) = (maxBalance t (maxValue value (getValue t x)) xs)
+_maxBalance :: [Transaction] -> Double -> [Transaction] -> Double
+_maxBalance _ value [] = value
+_maxBalance t value (x:xs) = (_maxBalance t (maxValue value (_getValue t x)) xs)
 
 -- Retorna o menor saldo da lista
-minBalance :: [Transaction] -> Double -> [Transaction] -> Double
-minBalance _ value [] = value
-minBalance t value (x:xs) = (minBalance t (minValue value (getValue t x)) xs)
+_minBalance :: [Transaction] -> Double -> [Transaction] -> Double
+_minBalance _ value [] = value
+_minBalance t value (x:xs) = (_minBalance t (minValue value (_getValue t x)) xs)
 
 -- Retorna o maior saldo do mês de um determinado ano
 maxBalanceYearMonth :: [Transaction] -> Int -> Int -> Double
-maxBalanceYearMonth t y m = (maxBalance t (getValue t (head (transactionsByYearMonth t y m))) (transactionsByYearMonth t y m))
+maxBalanceYearMonth t y m = (_maxBalance t (_getValue t (head (transactionsByYearMonth t y m))) (transactionsByYearMonth t y m))
 
 -- Retorna o menor saldo do mês de um determinado ano
 minBalanceYearMonth :: [Transaction] -> Int -> Int -> Double
-minBalanceYearMonth t y m = (minBalance t (getValue t (head (transactionsByYearMonth t y m))) (transactionsByYearMonth t y m))
+minBalanceYearMonth t y m = (_minBalance t (_getValue t (head (transactionsByYearMonth t y m))) (transactionsByYearMonth t y m))
 
 -- Adiciona os saldos diários ao fluxo de caixa
 _cashFlow :: [Transaction] -> [Transaction] -> [(Int, Double)]
 _cashFlow _ [] = []
-_cashFlow t ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs) = ((d, (balanceDay t y m d)):(_cashFlow t xs))
+_cashFlow t ((Transaction (GregorianCalendar y m d) idText value desc docNumber types):xs) = ((d, (_balanceDay t y m d)):(_cashFlow t xs))
 
 -- Retorna o fluxo diário do mês de um determinado ano
 cashFlow :: [Transaction] -> Int -> Int -> [(Int, Double)]
