@@ -12,7 +12,7 @@ module Utils (
 import Types
 
 getDay :: Transaction -> Int
-getDay (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = d
+getDay t = ((dayOfMonth . date) t)
 
 getMonth :: Transaction -> Int
 getMonth (Transaction (GregorianCalendar y m d) idText value desc docNumber types) = m
@@ -22,20 +22,19 @@ getYear (Transaction (GregorianCalendar y m d) idText value desc docNumber types
 
 getCurrentBalance :: [Transaction] -> [Transaction]
 getCurrentBalance ((Transaction date idText value desc docNumber types):xs)
-    | elem "Saldo Corrente" types = (Transaction date idText value desc docNumber types):(getCurrentBalance xs) -- SALDO_CORRENTE
+    | elem SALDO_CORRENTE types = (Transaction date idText value desc docNumber types):(getCurrentBalance xs) -- SALDO_CORRENTE
     | otherwise = (getCurrentBalance xs)
 
 -- Verifica se a transação é uma receita ou despesa
 isIncomeOrExpense :: Transaction -> Bool
-isIncomeOrExpense (Transaction date idText value desc docNumber types) =
-    not (elem "Saldo Corrente" types || elem "Aplicacao" types || elem "Valor aplicado" types)
+isIncomeOrExpense t = not (elem SALDO_CORRENTE (types t) || elem APLICACAO (types t) || elem VALOR_APLICACAO (types t))
 
 -- Verifica se a transação é uma receita
 isIncome :: Transaction -> Bool
-isIncome (Transaction date idText value desc docNumber types) = value >= 0
+isIncome t = (value t) >= 0
 
 isCurrentBalance :: Transaction -> Bool
-isCurrentBalance (Transaction date idText value desc docNumber types) = (elem "Saldo Corrente" types)
+isCurrentBalance t = (elem SALDO_CORRENTE (types t))
 
 -- MUDAR NOME DESSE MÉTODO
 _getBalance :: [Transaction] -> [Transaction]

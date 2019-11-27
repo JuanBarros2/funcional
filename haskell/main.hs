@@ -7,7 +7,7 @@ import Data.List (groupBy)
 filterByYear :: Int -> [Transaction] -> [Transaction]
 filterByYear _ [] = []
 filterByYear year (x:xs)
-    | year == (getYear x) = x:(filterByYear year xs)
+    | year == (getYear x) = x:(filterByYear year xs) -- FILTER filter (checkYear y) (x:xs)
     | otherwise = (filterByYear year xs)
 
 -- Filtra transações pelo mês
@@ -93,20 +93,22 @@ remainderYearMonth y m = do
 -- Retorna o saldo final de um mês de um determinado ano
 balanceYearMonth :: Int -> Int -> IO Double
 balanceYearMonth y m = do
-        transactions <- getTransactions
+        transactions <- (transactionsByYearMonth y m)
         return (sumValues (_getBalance transactions))
 
 -- Retorna a média das receitas de um determinado ano
 meanIncomeYear :: Int -> IO Double
 meanIncomeYear y = do
     income <- (incomesYear y)
-    return (income / 12)
+    transactions <- (transactionsByYear y)
+    return (income / (fromIntegral (length (incomes transactions))))
 
 -- Retorna a média das despesas de um determinado ano
 meanExpenseYear :: Int -> IO Double
 meanExpenseYear y = do
     expense <- (expensesYear y)
-    return (expense / 12)
+    transactions <- (transactionsByYear y)
+    return (expense / (fromIntegral (length (expenses transactions))))
 
 -- Retorna a média das sobras de um determinado ano
 meanRemainderYear :: Int -> IO Double
@@ -115,11 +117,17 @@ meanRemainderYear y = do
     meanExpense <- (meanExpenseYear y)
     return (meanIncome - meanExpense)
 
+previousTransactions :: Int -> [Transaction] -> [Transaction]
+previousTransactions _ [] = []
+previousTransactions d (x:xs)
+    | (dayOfMonth (date x)) <= d = x:(previousTransactions d xs)
+    | otherwise = []
+
 -- Retorna o saldo de um dia, de um determinado mês e ano
 balanceDay :: Int -> Int -> Int -> IO Double
 balanceDay y m d = do
-    transactions <- (transactionsByYearMonthDay y m d)
-    return (sumValues (_getBalance transactions))
+    transactions <- (transactionsByYearMonth y m)
+    return (sumValues (_getBalance (previousTransactions d transactions)))
 
 -- Retorna o valor da transação
 -- MUDAR NOME DESSE MÉTODO

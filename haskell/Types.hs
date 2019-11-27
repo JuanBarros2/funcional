@@ -98,7 +98,7 @@ data Transaction = Transaction {
     value :: Double,
     description :: String,
     docNumber :: String,
-    types :: [String]
+    types :: [TransactionType]
 } deriving(Eq, Show, Generic)
 
 instance FromJSON GregorianCalendar
