@@ -115,25 +115,25 @@ testMeanExpenses2018 = TestCase (
 testMeanRemainder2017 = TestCase (
     do
         t <-getTransactionsTest
-        assertEqual "Media de despesas de 2017" 0 (meanRemainderYear t 2017)
+        assertEqual "Media das sobras de 2017" 0 (meanRemainderYear t 2017)
     )
 
 testMeanRemainder2018 = TestCase (
     do
         t <-getTransactionsTest
-        assertEqual "Media de despesas de 2018" 209.20499999999993 (meanRemainderYear t 2018)
+        assertEqual "Media das sobras de 2018" 209.20499999999993 (meanRemainderYear t 2018)
     )
 
 testCashFlow2017Marco = TestCase (
     do
         t <-getTransactionsTest
-        assertEqual "Media de despesas de 2017" [] (cashFlow t 2017 2)
+        assertEqual "Fluxo de caixa de 2017" [] (cashFlow t 2017 2)
     )
 
 testCashFlow2018Marco = TestCase (
     do
         t <-getTransactionsTest
-        assertEqual "Media de despesas de 2018" [(1, 44090.67)] (cashFlow t 2018 2)
+        assertEqual "Fluxo de caixa de 2018" [(1, 44090.67)] (cashFlow t 2018 2)
     )
     
 main = do
