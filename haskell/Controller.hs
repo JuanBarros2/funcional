@@ -56,13 +56,17 @@ remainderYearMonth t y m = ((incomesYearMonth t y m) - (expensesYearMonth t y m)
 balanceYearMonth :: [Transaction] -> Int -> Int -> Double
 balanceYearMonth t y m = (sumValues (_getBalance (transactionsByYearMonth t y m)))
 
+_mean :: [Transaction] -> Double
+_mean [] = 0
+_mean t = (sumValues t) / (fromIntegral (length t))
+
 -- Retorna a média das receitas de um determinado ano
 meanIncomeYear :: [Transaction] -> Int -> Double
-meanIncomeYear t y = ((incomesYear t y) / (fromIntegral (length (incomes (transactionsByYear t y)))))
+meanIncomeYear t y = _mean (incomes (transactionsByYear t y))
 
 -- Retorna a média das despesas de um determinado ano
 meanExpenseYear :: [Transaction] -> Int -> Double
-meanExpenseYear t y = ((expensesYear t y) / (fromIntegral (length (expenses (transactionsByYear t y)))))
+meanExpenseYear t y = (_mean (expenses (transactionsByYear t y))) * (-1)
 
 -- Retorna a média das sobras de um determinado ano
 meanRemainderYear :: [Transaction] -> Int -> Double

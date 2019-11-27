@@ -151,11 +151,11 @@ main = do
     runTestTT testBalanceYearMonth2018Marco
     runTestTT testMaxBalanceYearMonth2018Marco
     runTestTT testMinBalanceYearMonth2018Marco
-    -- runTestTT testMeanIncomes2017
+    runTestTT testMeanIncomes2017
     runTestTT testMeanIncomes2018
-    -- runTestTT testMeanExpenses2017
+    runTestTT testMeanExpenses2017
     runTestTT testMeanExpenses2018
-    -- runTestTT testMeanRemainder2017
+    runTestTT testMeanRemainder2017
     runTestTT testMeanRemainder2018
     runTestTT testCashFlow2017Marco
     runTestTT testCashFlow2018Marco
