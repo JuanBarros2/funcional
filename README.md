@@ -1,7 +1,12 @@
 # funcional
 Repositório para projeto final da disciplina de Programação Funcional
 
-Para rodar o serviço em JS, entre na pasta JS e execute o seguinte comando:
+Para rodar o serviço em JS, execute o seguinte comando:
+```
+cd js/dist
+python2.7 -m SimpleHTTPServer 8080
+```
+Isso deverá iniciar um servidor em python que pode ser acessado localmente na porta 8080.
 
 ## Project setup
 ```
