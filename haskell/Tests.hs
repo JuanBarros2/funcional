@@ -76,10 +76,22 @@ testBalanceYearMonth2018Marco = TestCase (
         assertEqual "Saldo Final do mes de marco de 2017" 44090.67 (balanceYearMonth t 2018 2)
     )
 
+testMaxBalanceYearMonth2017Marco = TestCase (
+    do
+        t <-getTransactionsTest
+        assertEqual "Maior saldo final do mes de marco de 2017" 0 (maxBalanceYearMonth t 2017 2)
+    )
+
 testMaxBalanceYearMonth2018Marco = TestCase (
     do
         t <-getTransactionsTest
         assertEqual "Maior saldo final do mes de marco de 2018" 44090.67 (maxBalanceYearMonth t 2018 2)
+    )
+
+testMinBalanceYearMonth2017Marco = TestCase (
+    do
+        t <-getTransactionsTest
+        assertEqual "Menor saldo final do mes de marco de 2017" 0 (maxBalanceYearMonth t 2017 2)
     )
 
 testMinBalanceYearMonth2018Marco = TestCase (
@@ -149,7 +161,9 @@ main = do
     runTestTT testRemainderYearMonth2018Marco
     runTestTT testBalanceYearMonth2017Marco
     runTestTT testBalanceYearMonth2018Marco
+    runTestTT testMaxBalanceYearMonth2017Marco
     runTestTT testMaxBalanceYearMonth2018Marco
+    runTestTT testMinBalanceYearMonth2017Marco
     runTestTT testMinBalanceYearMonth2018Marco
     runTestTT testMeanIncomes2017
     runTestTT testMeanIncomes2018
