@@ -1,4 +1,23 @@
-Lista de Consultas/funções/operações a implementar:
+É necessária a instalação do module _aeson_ para o parser do JSON, que pode ser feita rodando os seguintes comandos:
+
+```
+cabal update
+cabal install aeson
+```
+
+Para executar o projeto, utiliza-se o comando abaixo na raiz do projeto:
+
+```
+ghci main.hs
+```
+
+Além disso, foram feitos testes para as funções implementadas utilizando o module _HUnit_, para instalá-lo é necessário rodar o comando:
+
+```
+cabal install HUnit
+```
+
+Lista de Consultas/funções/operações implementadas:
 
 * [x] Filtrar transações por ano.
 * [x] Filtrar transações por ano e mês.

@@ -1,7 +1,6 @@
 import Types
 import Utils
 import ParserJSON
-import Data.List (groupBy)
 
 -- Filtra transações pelo ano
 filterByYear :: Int -> [Transaction] -> [Transaction]
